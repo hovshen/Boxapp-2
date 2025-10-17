@@ -26,6 +26,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
 
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url,
+              let windowScene = (scene as? UIWindowScene) else { return }
+
+        if url.scheme == "boxapp" && url.host == "recognize" {
+            // Get the main window
+            guard let window = windowScene.windows.first else { return }
+
+            // Navigate to the RecognitionViewController
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let recognitionVC = storyboard.instantiateViewController(withIdentifier: "RecognitionViewController")
+
+            // Assuming a TabBarController is the root
+            if let tabBarController = window.rootViewController as? UITabBarController {
+                // Find the navigation controller containing the recognition view
+                if let navController = tabBarController.viewControllers?.first(where: { ($0 as? UINavigationController)?.topViewController is RecognitionViewController }) as? UINavigationController {
+                    navController.popToRootViewController(animated: false)
+                    tabBarController.selectedViewController = navController
+                } else {
+                    // If not found, assume it's the second tab
+                    tabBarController.selectedIndex = 1
+                }
+            } else if let navigationController = window.rootViewController as? UINavigationController {
+                navigationController.pushViewController(recognitionVC, animated: true)
+            } else {
+                window.rootViewController = recognitionVC
+            }
+        }
+    }
+
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.

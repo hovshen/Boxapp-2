@@ -10,10 +10,12 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
     
     // MARK: - Gemini API 屬性
     /// MARK: - Gemini API 屬性
-    private let geminiAPIKey = "AIzaSyBlcA7MPvTV7gnkdh1vKLGSXI_2e3z4xYo" // ⚠️ 務必放在安全位置
+    private let geminiAPIKey = "YOUR_API_KEY" // ⚠️ 務必放在安全位置 - 建議使用 Info.plist 或其他方式管理
 
-    // ✅ 使用 v1beta + gemini-1.5-pro
-    private let geminiURL = URL(string: "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent")!
+    // ✅ Adaptive Model Selection
+    private var useHighPrecisionModel = false
+    private let flashModelURL = URL(string: "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-latest:generateContent")!
+    private let proModelURL = URL(string: "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro-latest:generateContent")!
 
 
     // MARK: - AVFoundation 屬性
@@ -56,29 +58,122 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
 
     // MARK: - @IBActions
     @IBAction func identifyComponentTapped(_ sender: UIButton) {
+        // --- UX Enhancement: Haptic Feedback ---
+        let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
+        impactGenerator.impactOccurred()
+        // --- End UX Enhancement ---
+
         capturePhoto()
     }
     
     // MARK: - 核心功能函式
     
     private func setupUI() {
-        // 設定讀取中的指示器
+        // --- UI/UX Overhaul: Programmatic Auto Layout ---
+
+        // 1. Disable autoresizing masks for programmatic constraints
+        cameraPreviewView.translatesAutoresizingMaskIntoConstraints = false
+        resultTextView.translatesAutoresizingMaskIntoConstraints = false
+        identifyButton.translatesAutoresizingMaskIntoConstraints = false
+
+        // 2. Setup Activity Indicator
         activityIndicator = UIActivityIndicatorView(style: .large)
-        activityIndicator.center = view.center
         activityIndicator.hidesWhenStopped = true
         view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+
+        // 3. Configure UI elements
+
+        // --- Glassmorphism UI ---
+        resultTextView.backgroundColor = .clear
+        resultTextView.layer.borderWidth = 0 // Remove border for a cleaner look
         
-        resultTextView.layer.borderWidth = 1
-        resultTextView.layer.borderColor = UIColor.lightGray.cgColor
-        resultTextView.layer.cornerRadius = 8
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        blurView.layer.cornerRadius = 12
+        blurView.clipsToBounds = true
+
+        view.insertSubview(blurView, belowSubview: resultTextView)
+
+        // --- End Glassmorphism UI ---
+
+        resultTextView.layer.cornerRadius = 12
+        resultTextView.font = UIFont(name: "Avenir Next", size: 17) ?? .systemFont(ofSize: 17)
+        resultTextView.isEditable = false
         resultTextView.text = "將電子零件放置於上方框內，然後點擊「辨識零件」按鈕。"
+        resultTextView.textColor = .label
         
-        // --- 從這裡開始加入 ---
-            // 建立一個雙指縮放手勢辨識器
-            let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchToZoom(_:)))
-            // 將手勢辨識器加到相機預覽的畫面上
-            cameraPreviewView.addGestureRecognizer(pinchRecognizer)
-            // --- 加入到這裡結束 ---
+        identifyButton.setTitle("辨識零件", for: .normal)
+        if #available(iOS 15.0, *) {
+            var config = UIButton.Configuration.filled()
+            config.title = "辨識零件"
+            config.baseBackgroundColor = .systemBlue
+            config.cornerStyle = .medium
+            config.buttonSize = .large
+            identifyButton.configuration = config
+        } else {
+            identifyButton.backgroundColor = .systemBlue
+            identifyButton.layer.cornerRadius = 8
+            identifyButton.contentEdgeInsets = UIEdgeInsets(top: 12, left: 20, bottom: 12, right: 20)
+        }
+
+        // 4. Activate layout constraints
+        let guide = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            // Camera Preview View
+            cameraPreviewView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 16),
+            cameraPreviewView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            cameraPreviewView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
+            cameraPreviewView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4), // 40% of view height
+
+            // Identify Button
+            identifyButton.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -20),
+            identifyButton.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 20),
+            identifyButton.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -20),
+            identifyButton.heightAnchor.constraint(equalToConstant: 50),
+
+            // Result Text View
+            resultTextView.topAnchor.constraint(equalTo: cameraPreviewView.bottomAnchor, constant: 16),
+            resultTextView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            resultTextView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
+            resultTextView.bottomAnchor.constraint(equalTo: identifyButton.topAnchor, constant: -16),
+
+            // Activity Indicator
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            // Blur View for Glassmorphism
+            blurView.topAnchor.constraint(equalTo: resultTextView.topAnchor),
+            blurView.leadingAnchor.constraint(equalTo: resultTextView.leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: resultTextView.trailingAnchor),
+            blurView.bottomAnchor.constraint(equalTo: resultTextView.bottomAnchor),
+        ])
+
+        // Add pinch-to-zoom gesture
+        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchToZoom(_:)))
+        cameraPreviewView.addGestureRecognizer(pinchRecognizer)
+
+        // --- Adaptive Model Selection UI ---
+        let precisionSwitch = UISwitch()
+        precisionSwitch.translatesAutoresizingMaskIntoConstraints = false
+        precisionSwitch.addTarget(self, action: #selector(precisionSwitchChanged(_:)), for: .valueChanged)
+        view.addSubview(precisionSwitch)
+
+        let precisionLabel = UILabel()
+        precisionLabel.translatesAutoresizingMaskIntoConstraints = false
+        precisionLabel.text = "高精度模式"
+        precisionLabel.font = .systemFont(ofSize: 14)
+        view.addSubview(precisionLabel)
+
+        NSLayoutConstraint.activate([
+            precisionSwitch.topAnchor.constraint(equalTo: identifyButton.bottomAnchor, constant: 16),
+            precisionSwitch.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+
+            precisionLabel.centerYAnchor.constraint(equalTo: precisionSwitch.centerYAnchor),
+            precisionLabel.trailingAnchor.constraint(equalTo: precisionSwitch.leadingAnchor, constant: -8),
+        ])
+        // --- End Adaptive Model Selection UI ---
     }
     
     private func setupCamera() {
@@ -118,31 +213,46 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
     
     private func setLoading(_ loading: Bool) {
         DispatchQueue.main.async {
-            if loading {
-                self.activityIndicator.startAnimating()
-                self.identifyButton.isEnabled = false
-                self.resultTextView.text = "辨識中，請稍候..."
-            } else {
-                self.activityIndicator.stopAnimating()
-                self.identifyButton.isEnabled = true
+            UIView.animate(withDuration: 0.3) {
+                if loading {
+                    self.activityIndicator.startAnimating()
+                    self.identifyButton.isEnabled = false
+                    self.resultTextView.text = "辨識中，請稍候..."
+                    self.activityIndicator.alpha = 1.0
+                } else {
+                    self.activityIndicator.stopAnimating()
+                    self.identifyButton.isEnabled = true
+                    self.activityIndicator.alpha = 0.0
+                }
             }
         }
     }
     
     // MARK: - AVCapturePhotoCaptureDelegate
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let imageData = photo.fileDataRepresentation() else {
+        guard let imageData = photo.fileDataRepresentation(),
+              let image = UIImage(data: imageData) else {
             setLoading(false)
             return
         }
         
-        let base64Image = imageData.base64EncodedString()
+        // --- Gemini API Optimization: Resize and Compress Image ---
+        guard let resizedImage = image.resize(to: CGSize(width: 1024, height: 1024)),
+              let compressedImageData = resizedImage.jpegData(compressionQuality: 0.85) else {
+            setLoading(false)
+            resultTextView.text = "無法調整圖片大小或壓縮圖片"
+            return
+        }
+        // --- End Optimization ---
+
+        let base64Image = compressedImageData.base64EncodedString()
         callGeminiAPI(with: base64Image)
     }
 
     // MARK: - Gemini API 呼叫
     private func callGeminiAPI(with base64Image: String) {
-        var request = URLRequest(url: geminiURL)
+        let modelURL = useHighPrecisionModel ? proModelURL : flashModelURL
+        var request = URLRequest(url: modelURL)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(geminiAPIKey, forHTTPHeaderField: "x-goog-api-key")
@@ -210,6 +320,12 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
         }
         task.resume()
     }
+
+    // MARK: - Action Handlers
+    @objc private func precisionSwitchChanged(_ sender: UISwitch) {
+        useHighPrecisionModel = sender.isOn
+    }
+
     // MARK: - Gesture Handling
     @objc private func handlePinchToZoom(_ recognizer: UIPinchGestureRecognizer) {
         guard let device = AVCaptureDevice.default(for: .video) else { return }
@@ -266,4 +382,33 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
         task.resume()
     }
 
+}
+
+// MARK: - UIImage Extension for Resizing
+extension UIImage {
+    func resize(to targetSize: CGSize) -> UIImage? {
+        let size = self.size
+
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
 }
