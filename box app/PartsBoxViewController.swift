@@ -44,6 +44,23 @@ class PartsBoxViewController: UIViewController, CBCentralManagerDelegate, CBPeri
         // 初始化 App 畫面
         updateComponentList()
         updateStatus(message: "尚未連線", isConnected: false)
+
+        // --- Add Observer for Component Request Intent ---
+        NotificationCenter.default.addObserver(self, selector: #selector(handleComponentRequest(_:)), name: .componentRequest, object: nil)
+    }
+
+    @objc private func handleComponentRequest(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let components = userInfo["components"] as? [(String, Int)] else { return }
+
+        // Highlight the requested components
+        for (componentName, quantity) in components {
+            if let index = currentComponents.firstIndex(of: componentName) {
+                let indexPath = IndexPath(row: index, section: 0)
+                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+                // Here you could also add a visual indicator for the quantity
+            }
+        }
     }
 
     // MARK: - @IBActions (UI 事件處理)
