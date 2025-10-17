@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="whr-ho-fsa">
+    <device id="retina6_9" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Item-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController keyboardType="off" id="BYZ-38-t0r" customClass="PartsBoxViewController" customModule="box_app" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="aut-xd-6Qj">
+                                <rect key="frame" x="20" y="124" width="391" height="32"/>
+                                <segments>
+                                    <segment title="電阻"/>
+                                    <segment title="BJT"/>
+                                    <segment title="MOS"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="WFF-tg-UpR"/>
+                                </connections>
+                            </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d9q-et-Kng">
+                                <rect key="frame" x="29" y="81" width="334" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="連線"/>
+                                <connections>
+                                    <action selector="connectButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tgx-cj-8oy"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="阻值" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ggh-Ni-Xir">
+                                <rect key="frame" x="45" y="196" width="359" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Zg1-45-s9N">
+                                <rect key="frame" x="100" y="239" width="241" height="128"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="Ec1-vS-ddK"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ComponentCell" id="vVR-aI-o3e">
+                                        <rect key="frame" x="0.0" y="50.333333969116211" width="241" height="52"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vVR-aI-o3e" id="XEE-0n-Jgx">
+                                            <rect key="frame" x="0.0" y="0.0" width="241" height="52"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="aut-xd-6Qj" firstAttribute="centerX" secondItem="Zg1-45-s9N" secondAttribute="centerX" id="9rO-FC-j04"/>
+                            <constraint firstItem="Zg1-45-s9N" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="95" id="Gpn-Wf-wUX"/>
+                            <constraint firstItem="aut-xd-6Qj" firstAttribute="trailing" secondItem="ggh-Ni-Xir" secondAttribute="trailing" id="UxT-Xl-FAn"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Zg1-45-s9N" secondAttribute="bottom" constant="506" id="Xl0-vp-7hg"/>
+                            <constraint firstItem="ggh-Ni-Xir" firstAttribute="top" secondItem="aut-xd-6Qj" secondAttribute="bottom" constant="41" id="bOY-tA-t5U"/>
+                            <constraint firstItem="Zg1-45-s9N" firstAttribute="top" secondItem="ggh-Ni-Xir" secondAttribute="bottom" constant="8" id="dj8-Bz-sSd"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="aut-xd-6Qj" secondAttribute="trailing" constant="29" id="hN4-Ra-gLc"/>
+                            <constraint firstItem="aut-xd-6Qj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="iJS-BV-fbV"/>
+                            <constraint firstItem="aut-xd-6Qj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="lYB-f2-1VY"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="hv5-0t-GJR"/>
+                    <connections>
+                        <outlet property="connectButton" destination="d9q-et-Kng" id="0Nz-AK-zoY"/>
+                        <outlet property="segmentedControl" destination="aut-xd-6Qj" id="afE-da-LXB"/>
+                        <outlet property="statusLabel" destination="ggh-Ni-Xir" id="02b-UK-pna"/>
+                        <outlet property="tableView" destination="Zg1-45-s9N" id="zRd-SX-CuY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="40.909090909090914" y="62.761506276150634"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="ADD-AW-1VV">
+            <objects>
+                <tabBarController id="whr-ho-fsa" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="e6R-8p-SlL">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="ThT-qh-3Vd"/>
+                        <segue destination="tGW-mm-Maf" kind="relationship" relationship="viewControllers" id="0CV-dd-mcR"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eE4-Yb-WKs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-402" y="-665"/>
+        </scene>
+        <!--Item-->
+        <scene sceneID="sh3-FW-eWL">
+            <objects>
+                <viewController id="tGW-mm-Maf" customClass="RecognitionViewController" customModule="box_app" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Qc7-Bm-edm">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4C3-zG-vvy">
+                                <rect key="frame" x="20" y="124" width="400" height="400"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <viewLayoutGuide key="safeArea" id="5At-1o-Wsh"/>
+                                <color key="backgroundColor" systemColor="scrollViewTexturedBackgroundColor"/>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="VOk-N0-Hi9">
+                                <rect key="frame" x="20" y="542" width="400" height="217"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="separatorColor"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gUH-Wj-cus" userLabel="零件辨識">
+                                <rect key="frame" x="174" y="767" width="92" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="零件辨識"/>
+                                <connections>
+                                    <action selector="identifyComponentTapped:" destination="tGW-mm-Maf" eventType="touchUpInside" id="Glg-rG-E2q"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="u1Y-8Z-27N"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="OTa-1e-9mT"/>
+                    <connections>
+                        <outlet property="cameraPreviewView" destination="4C3-zG-vvy" id="wKg-f9-Rdd"/>
+                        <outlet property="identifyButton" destination="gUH-Wj-cus" id="m9t-q6-bZl"/>
+                        <outlet property="resultTextView" destination="VOk-N0-Hi9" id="5RT-YS-fAF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="B0Q-p9-x6Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1152.2727272727273" y="63.389121338912133"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="scrollViewTexturedBackgroundColor">
+            <color red="0.43529411764705883" green="0.44313725490196076" blue="0.47450980392156861" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
