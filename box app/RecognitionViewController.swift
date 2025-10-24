@@ -9,8 +9,7 @@ class RecognitionViewController: UIViewController, AVCapturePhotoCaptureDelegate
     @IBOutlet weak var resultTextView: UITextView!
     
     // MARK: - Gemini API 屬性
-    /// MARK: - Gemini API 屬性
-    private let geminiAPIKey = "AIzaSyBlcA7MPvTV7gnkdh1vKLGSXI_2e3z4xYo" // ⚠️ 務必放在安全位置
+    /// MARK: - Gemini API 務必放在安全位置
 
     // ✅ 使用 v1beta + gemini-1.5-pro
     private let geminiURL = URL(string: "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent")!
